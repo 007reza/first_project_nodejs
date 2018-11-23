@@ -16,6 +16,7 @@
   "dependencies": {
     "config": "^3.0.0",
     "express": "^4.16.4",
+    "lodash": "^4.17.11",
     "mongodb": "^3.1.10",
     "mongoose": "^5.3.13",
     "validator": "^10.9.0"
