@@ -8,7 +8,7 @@
     "start": "node server/server.js"
   },
   "engin": {
-    "node": "6.11.5"
+    "node": "10.13.0"
   },
   "keywords": [],
   "author": "Reza MSH",
