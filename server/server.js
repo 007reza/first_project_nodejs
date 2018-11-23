@@ -18,13 +18,27 @@ app.post('/api/users',(req,res)=>{
     let user=new User(body);
 
     console.log(body);
-    user.save().then(()=> {
+    user.save().then((user)=> {
             res.status(200).send(user);            
     },(err)=>{
         res.status(400).json({
             'ERROR' :`something went wrong ${err}`
         });
-    })
+    });
+});
+
+app.post('/api/login',(req,res) => {
+    const body=_.pick(req.body,['email','password']);
+
+    User.findByCredentials(body.email , body.password).then((user) =>{
+        user.generateAuthToken().then((token)=>{
+            res.header('x-auth',token).send(token).status(200);
+        },(err)=>{
+            res.status(400).json({
+                ERROR : `something went wrong ${err}`
+            });
+        });
+    });
 });
 
 app.listen(config.get('PORT'),()=>{
