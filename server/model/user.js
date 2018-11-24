@@ -52,6 +52,21 @@ let UserSchema= new mongoose.Schema({
             type:String,
             required:true
         }
+    }],
+    receive:[{
+        info:{
+            type: String,
+            required:true,
+            trim:true
+        },
+        amount: {
+            type:Number,
+            required:true,
+        },
+        date:{
+            type:String,
+            required:true
+        }
     }]
 });
 
