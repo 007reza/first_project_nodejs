@@ -8,6 +8,7 @@ const helmet = require('helmet');
 const winston = require('winston');
 const fs = require('fs');
 const path = require('path');
+const persianDate= require('persian-date');
 const {authenticate}= require('./middleWare/authenticate');
 const {User}=require('./model/user');
 
@@ -24,11 +25,14 @@ const logger = winston.createLogger({
     ]
 })
 
+persianDate.toLocale('en');
+let date=new persianDate().format('YYYY/M/DD');
+
 app.use(express.json());
 app.use(helmet());
 app.use(morgan('combined',{stream: requestLogger}));
 
-app.post('/api/users',authenticate,async (req,res)=>{
+app.post('/api/users',async (req,res)=>{
     try {
         const body=_.pick(req.body, ['fullname' ,'email' , 'password']);
         let user=new User(body);
@@ -55,6 +59,35 @@ app.post('/api/login',async (req,res) => {
     }
  
 });
+
+app.post('/api/payment',authenticate,async (req, res) =>{
+try {
+    const body= _.pick(req.body, ['info','amount']);
+    let user=await User.findOneAndUpdate({
+        _id: req.user._id
+    },{
+        $push:{
+            payment:{
+                amount: body.amount,
+                info : body.info,
+                date
+            }
+        }
+    });
+    if(!user){
+        res.status(400).json({
+            ERROR : 'User not found'
+        });
+    }
+    res.status(200).json({
+       Message : 'Payment has been saved.'
+    })
+} catch (error) {
+    res.status(400).json({
+        ERROR : `something went wrong ${error}`
+    })
+}
+})
 
 app.listen(config.get('PORT'),()=>{
     //console.log(`server is runing on port ${config.get('PORT')}`);
